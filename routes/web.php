@@ -9,14 +9,4 @@ Route::get('/', function () {
 });
 
 
-Route::post('/verify-recaptcha', function (Request $request) {
-    $token = $request->input('token');
-    $secretKey = env('RECAPTCHA_SECRET_KEY');
 
-    $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-        'secret' => $secretKey,
-        'response' => $token,
-    ]);
-
-    return response()->json($response->json());
-});
