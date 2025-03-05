@@ -12,10 +12,14 @@ class FormController extends Controller
 
 
         $form = Form::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'place' => $request->place,
-            'address' => $request->address,
+            // 'name' => $request->name,
+            // 'description' => $request->description,
+            // 'place' => $request->place,
+            // 'address' => $request->address,
+            'name' => "teszt form",
+            'description' => "kell egy terem",
+            'place' => "egyetemtér 123333",
+            'address' => "egyetemtér sok"
         ]);
 
         if (!$form->id) {
@@ -28,6 +32,7 @@ class FormController extends Controller
 
     public function getAll()
     {
-        return response()->json(["data" => Form::all()]);
+        $allForms = Form::orderBy('created_at', 'desc')->get();
+        return response()->json(["data" => $allForms]);
     }
 }
