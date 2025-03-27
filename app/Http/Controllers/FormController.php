@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Statues;
+use App\Mail\RejectEmail;
 use App\Models\Form;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Mail;
 
 class FormController extends Controller
 {
@@ -135,8 +136,30 @@ class FormController extends Controller
             'comment' => $request->reason
         ]);
 
+        $name = "Albert Kázmér";
+        $reason = "Kevés alkohol";
+
+        Mail::to('albert@kazmer.com')->send(new RejectEmail($name, $reason));
+
         return response()->json([
             'message' => 'Form successfully rejected',
+        ]);
+    }
+
+    public function acceptForm(Request $request)
+    {
+        $form = Form::where("id", $request->formId)->first();
+
+        if (!$form) {
+            return response()->json(['error' => 'Form not found'], 404);
+        }
+
+        $form->update([
+            'status' => Statues::UF_ARAJANLATRA_VAR
+        ]);
+
+        return response()->json([
+            'message' => 'Form successfully accepted',
         ]);
     }
 
