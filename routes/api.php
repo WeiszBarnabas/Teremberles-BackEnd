@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/forms', [FormController::class, 'getAll']);
+//   Route::get('/forms', [FormController::class, 'getAll']);
+    Route::get('/forms', [FormController::class, 'getFormData']);
+    Route::get('/form/{id}', [FormController::class, 'getFormDataById']);
+    Route::patch('/reject-form', [FormController::class, 'rejectForm']);
+
 });
 
 Route::post('/register', [AuthController::class, 'register']);

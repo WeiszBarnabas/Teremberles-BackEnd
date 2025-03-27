@@ -22,12 +22,12 @@ class Form extends Model
         'additional_organizer_phone', 'additional_organizer_email', 'additional_organizer_address',
         'client_name', 'client_address', 'client_tax_number', 'client_phone', 'client_email',
         'event_notification_form', 'venue_layout', 'data_protection', 'event_regulations',
-        'recording_tools', 'catering_type', 'construction_needed', 'construction_start_date', 
-        'construction_start_time', 'construction_end_date', 'construction_end_time', 
+        'recording_tools', 'catering_type', 'construction_needed', 'construction_start_date',
+        'construction_start_time', 'construction_end_date', 'construction_end_time',
         'mechanical_equipment', 'mechanical_other_tool', 'electrical_needed', 'power_cabinet', 'power_demand',
-        'subcontractors', 'status'
+        'subcontractors', 'status', 'comment'
     ];
-    
+
     protected $casts = [
         'status' => Statues::class,
     ];

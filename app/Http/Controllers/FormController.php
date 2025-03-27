@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\Statues;
 use App\Models\Form;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class FormController extends Controller
     {
         try {
             $data = $request->all();
-    
+
             $formData = [
                 'event_name' => $data['eventDetails']['name'],
                 'event_description' => $data['eventDetails']['description'],
@@ -78,27 +79,27 @@ class FormController extends Controller
                 'event_notification_form' => $data['fileUploads']['eventNotificationForm'],
                 'venue_layout' => $data['fileUploads']['venueLayout'],
             ];
-    
+
             $form = Form::create($formData);
-    
+
             return response()->json([
                 'message' => 'Form successfully created',
                 'form' => $form->id
             ], 201);
-    
+
         } catch (QueryException $e) {
             return response()->json([
                 'message' => 'Database error occurred',
                 'error' => $e->getMessage()
-            ], 500); 
-    
+            ], 500);
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An unexpected error occurred',
                 'error' => $e->getMessage()
             ], 500);
         }
-    
+
     }
 
     public function getAll()
@@ -106,4 +107,37 @@ class FormController extends Controller
         $allForms = Form::orderBy('created_at', 'desc')->get();
         return response()->json(["data" => $allForms]);
     }
+
+    public function getFormData()
+    {
+        //TODO jogosultság alapján adja vissza
+        $allForms = Form::select('id', 'event_name', 'created_at', 'status')->get();
+        return response()->json(["data" => $allForms]);
+
+    }
+
+    public function getFormDataById(Request $request)
+    {
+        $form = Form::findOrFail($request->id);
+        return response()->json($form);
+    }
+
+    public function rejectForm(Request $request)
+    {
+        $form = Form::where("id", $request->formId)->first();
+
+        if (!$form) {
+            return response()->json(['error' => 'Form not found'], 404);
+        }
+
+        $form->update([
+            'status' => Statues::ELUTASITVA,
+            'comment' => $request->reason
+        ]);
+
+        return response()->json([
+            'message' => 'Form successfully rejected',
+        ]);
+    }
+
 }

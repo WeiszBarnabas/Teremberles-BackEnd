@@ -106,7 +106,9 @@ return new class extends Migration
             $table->boolean('event_regulations')->default(false);
 
             //Status
-            $table->string('status')->default(Statues::FELDOLGOZATLAN); 
+            $table->string('status')->default(Statues::BEERKEZETT);
+
+            $table->text('comment')->nullable();
         });
     }
 
@@ -143,7 +145,7 @@ return new class extends Migration
                 'additional_organizer_email', 'additional_organizer_address',
                 'client_name', 'client_address', 'client_tax_number', 'client_phone',
                 'client_email', 'event_notification_form', 'venue_layout',
-                'data_protection', 'event_regulations', 'status'
+                'data_protection', 'event_regulations', 'status','comment'
             ]);
         });
     }
