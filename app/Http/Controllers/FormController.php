@@ -162,5 +162,23 @@ class FormController extends Controller
             'message' => 'Form successfully accepted',
         ]);
     }
+    public function modifyForm(Request $request)
+    {
+        $form = Form::where("id", $request->formId)->first();
+
+        if (!$form) {
+            return response()->json(['error' => 'Form not found'], 404);
+        }
+
+        $form->update([
+            'status' => Statues::ELUTASITVA,
+            'comment' => $request->reason
+        ]);
+
+        return response()->json([
+            'message' => 'Form successfully rejected',
+        ]);
+
+    }
 
 }

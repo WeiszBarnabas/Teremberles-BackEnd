@@ -14,7 +14,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/form/{id}', [FormController::class, 'getFormDataById']);
     Route::patch('/reject-form', [FormController::class, 'rejectForm']);
     Route::patch('/accept-form', [FormController::class, 'acceptForm']);
-
+    Route::patch('/modify-form', [FormController::class, 'modifyForm']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);
