@@ -162,9 +162,10 @@ class FormController extends Controller
             'message' => 'Form successfully accepted',
         ]);
     }
+
     public function modifyForm(Request $request)
     {
-        $form = Form::where("id", $request->formId)->first();
+        $form = Form::where("id", $request->id)->first();
 
         if (!$form) {
             return response()->json(['error' => 'Form not found'], 404);
