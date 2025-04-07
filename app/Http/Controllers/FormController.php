@@ -124,7 +124,6 @@ class FormController extends Controller
         }
 
         $allForms = $query->get();
-        $allForms = Form::select('id', 'event_name', 'created_at', 'status')->orderBy('created_at','desc')->get();
         return response()->json(["data" => $allForms]);
 
     }
