@@ -109,10 +109,21 @@ class FormController extends Controller
         return response()->json(["data" => $allForms]);
     }
 
-    public function getFormData()
+    public function getFormData(Request $request)
     {
         //TODO jogosultság alapján adja vissza
-        $allForms = Form::select('id', 'event_name', 'created_at', 'status')->get();
+        $query = Form::select('id', 'event_name', 'created_at', 'status');
+
+        if ($request->filled("event_name")) {
+            $query->where('event_name', 'like', '%' . $request->input('event_name') . '%');
+        }
+
+        if ($request->filled('created_at')) {
+            $sort = $request->input('created_at') == 'asc' ? 'asc' : 'desc';
+            $query->orderBy('created_at', $sort);
+        }
+
+        $allForms = $query->get();
         return response()->json(["data" => $allForms]);
 
     }
