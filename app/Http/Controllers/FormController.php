@@ -124,6 +124,7 @@ class FormController extends Controller
         }
 
         $allForms = $query->get();
+        $allForms = Form::select('id', 'event_name', 'created_at', 'status')->orderBy('created_at','desc')->get();
         return response()->json(["data" => $allForms]);
 
     }
@@ -173,9 +174,10 @@ class FormController extends Controller
             'message' => 'Form successfully accepted',
         ]);
     }
+
     public function modifyForm(Request $request)
     {
-        $form = Form::where("id", $request->formId)->first();
+        $form = Form::where("id", $request->id)->first();
 
         if (!$form) {
             return response()->json(['error' => 'Form not found'], 404);
