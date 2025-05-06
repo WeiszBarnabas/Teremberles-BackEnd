@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,8 +16,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::patch('/reject-form', [FormController::class, 'rejectForm']);
     Route::patch('/accept-form', [FormController::class, 'acceptForm']);
     Route::patch('/modify-form', [FormController::class, 'modifyForm']);
+    Route::get('/generate-pdf/{id}', [PDFController::class, 'generatePDF']);
 });
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/send-form', [FormController::class, 'createForm']);
