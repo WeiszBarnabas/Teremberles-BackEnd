@@ -87,20 +87,17 @@ class FormController extends Controller
                 'message' => 'Form successfully created',
                 'form' => $form->id
             ], 201);
-
         } catch (QueryException $e) {
             return response()->json([
                 'message' => 'Database error occurred',
                 'error' => $e->getMessage()
             ], 500);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An unexpected error occurred',
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 
     public function getAll()
@@ -109,23 +106,26 @@ class FormController extends Controller
         return response()->json(["data" => $allForms]);
     }
 
-    public function getFormData(Request $request)
+    public function getFormData($search = "")
     {
         //TODO jogosultság alapján adja vissza
-        $query = Form::select('id', 'event_name', 'created_at', 'status');
+        $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
 
-        if ($request->filled("event_name")) {
-            $query->where('event_name', 'like', '%' . $request->input('event_name') . '%');
+        if ($search == "") {
+            $query->where('status', '!=', Statues::ELUTASITVA);
         }
 
-        if ($request->filled('created_at')) {
-            $sort = $request->input('created_at') == 'asc' ? 'asc' : 'desc';
-            $query->orderBy('created_at', $sort);
+        if ($search != "") {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(event_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(event_address) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(status) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
         }
+
 
         $allForms = $query->get();
         return response()->json(["data" => $allForms]);
-
     }
 
     public function getFormDataById(Request $request)
