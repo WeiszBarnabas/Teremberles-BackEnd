@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\PriceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,5 @@ Route::post('/verify-recaptcha', function (Request $request) {
 
     return response()->json($response->json());
 });
+
+Route::post('/create-price', [PriceController::class, 'createPrice']);
