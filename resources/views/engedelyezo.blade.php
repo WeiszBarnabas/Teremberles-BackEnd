@@ -7,7 +7,7 @@
     <style>
 
         body {
-            font-family: 'custom-font', sans-serif ;
+            font-family: 'custom-font', sans-serif, 'DejaVu sans'  ;
             margin: 0;
             padding: 0;
         }
@@ -128,71 +128,71 @@
 
     <table>
         <tr>
-            <th>Sajtónyilvános rendezvény?</th>
+            <th>Sajtónyilvános rendezvény:</th>
             <td>{{ $form['press_public'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Van a rendezvény idejére szállásigénye?</th>
+            <th>Van a rendezvény idejére szállásigénye:</th>
             <td>{{ $form['accommodation_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Van parkolóhely igénye?</th>
+            <th>Van parkolóhely igénye:</th>
             <td>{{ $form['parking_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Keletkezik hulladék?</th>
+            <th>Keletkezik hulladék:</th>
             <td>{{ $form['waste_generated'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Szükséges internetkapcsolat (WiFi) a rendezvény idejére?</th>
+            <th>Szükséges internetkapcsolat (WiFi) a rendezvény idejére:</th>
             <td>{{ $form['internet_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Szükséges-e oktatástechnikai támogatás?</th>
+            <th>Szükséges-e oktatástechnikai támogatás:</th>
             <td>{{ $form['tech_support_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Korlátozott mozgású személyek részt vesznek?</th>
+            <th>Korlátozott mozgású személyek részt vesznek:</th>
             <td>{{ $form['limited_mobility'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Fotó és/vagy videófelvétel készül-e a rendezvényen?</th>
+            <th>Fotó és/vagy videófelvétel készül-e a rendezvényen:</th>
             <td>{{ $form['photo_video_recording'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Lesz a rendezvény területén catering?</th>
+            <th>Lesz a rendezvény területén catering:</th>
             <td>{{ $form['catering_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Várhatóak a rendezvényen építési és bontási munkálatok?</th>
+            <th>Várhatóak a rendezvényen építési és bontási munkálatok:</th>
             <td>{{ $form['construction_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Igényel takarítást a rendezvény előtt?</th>
+            <th>Igényel takarítást a rendezvény előtt:</th>
             <td>{{ $form['cleaning_before'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Igényel takarítási ügyeletet a rendezvény alatt?</th>
+            <th>Igényel takarítási ügyeletet a rendezvény alatt:</th>
             <td>{{ $form['cleaning_during'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Szükséges villanyszerelői ügyelet?</th>
+            <th>Szükséges villanyszerelői ügyelet:</th>
             <td>{{ $form['electrical_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Szükséges rendezvényszekrényből áram vételezése?</th>
+            <th>Szükséges rendezvényszekrényből áram vételezése:</th>
             <td>{{ $form['power_cabinet'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Tűzveszélyes tevékenység várható-e?</th>
+            <th>Tűzveszélyes tevékenység várható-e:</th>
             <td>{{ $form['fire_hazard'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Vegyi anyag felhasználása várható-e?</th>
+            <th>Vegyi anyag felhasználása várható-e:</th>
             <td>{{ $form['chemical_usage'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Várható-e dekoráció a helyiség légterében?</th>
+            <th>Várható-e dekoráció a helyiség légterében:</th>
             <td>{{ $form['decorations'] ? 'igen' : 'nem' }}</td>
         </tr>
 </table>
@@ -230,7 +230,7 @@
             <td>{{ $form['waste_disposal'] ?? '' }}</td>
         </tr>
         <tr>
-            <th>Ki végzi a hulladék elszállítását?</th>
+            <th>Ki végzi a hulladék elszállítását:</th>
             <td>{{ $form['waste_handler'] ?? '' }}</td>
         </tr>
     </table>
@@ -287,24 +287,24 @@
             <td>{{ $form['subcontractors'] ?? '' }}</td>
         </tr>
         <tr>
-            <th>Lesz magasban végzett tevékenység az építés során?</th>
+            <th>Lesz magasban végzett tevékenység az építés során:</th>
             <td>{{ $form['high_altitude_work'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Szükséges állvány az építéshez?</th>
+            <th>Szükséges állvány az építéshez:</th>
             <td>{{ $form['scaffolding_needed'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Lesz rendezvényelemeknek <span class="underline">kézi</span> anyagmozgatása?</th>
+            <th>Lesz rendezvényelemeknek <span class="underline">kézi</span> anyagmozgatása:</th>
             <td>{{ $form['manual_material_handling'] ? 'igen' : 'nem' }}</td>
         </tr>
         <tr>
-            <th>Lesz rendezvényelemeknek <span class="underline">gépi</span> anyagmozgatása?</th>
+            <th>Lesz rendezvényelemeknek <span class="underline">gépi</span> anyagmozgatása:</th>
             <td>{{ $form['mechanical_material_handling'] ? 'igen' : 'nem' }}</td>
         </tr>
 {{--        @if($form->has_mechanical_material_handling)--}}
             <tr>
-                <th>Gépi anyagmozgatás eszköze?</th>
+                <th>Gépi anyagmozgatás eszköze:</th>
                 <td>{{ $form['mechanical_equipment'] ?? '' }}</td>
             </tr>
 {{--        @endif--}}

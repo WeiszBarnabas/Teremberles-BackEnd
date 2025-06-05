@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Statuses;
 use Illuminate\Database\Eloquent\Model;
-use App\enum\Statues;
 
 class Form extends Model
 {
@@ -29,7 +29,7 @@ class Form extends Model
     ];
 
     protected $casts = [
-        'status' => Statues::class,
+        'status' => Statuses::class,
     ];
 
 }

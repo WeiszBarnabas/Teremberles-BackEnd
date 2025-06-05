@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\Statues;
+use App\Enums\Role;
+use App\Enums\Statuses;
 use App\Mail\RejectEmail;
 use App\Models\Form;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\QueryException;
 
 class FormController extends Controller
 {
@@ -108,11 +111,10 @@ class FormController extends Controller
 
     public function getFormData($search = "")
     {
-        //TODO jogosultság alapján adja vissza
-        $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
+        $query = $this->selectFormByRole(Auth::user()->role);
 
         if ($search == "") {
-            $query->where('status', '!=', Statues::ELUTASITVA);
+            $query->where('status', '!=', Statuses::ELUTASITVA);
         }
 
         if ($search != "") {
@@ -143,7 +145,7 @@ class FormController extends Controller
         }
 
         $form->update([
-            'status' => Statues::ELUTASITVA,
+            'status' => Statuses::ELUTASITVA,
             'comment' => $request->reason
         ]);
 
@@ -166,7 +168,7 @@ class FormController extends Controller
         }
 
         $form->update([
-            'status' => Statues::UF_ARAJANLATRA_VAR
+            'status' => Statuses::UF_ARAJANLATRA_VAR
         ]);
 
         return response()->json([
@@ -265,5 +267,24 @@ class FormController extends Controller
             'message' => 'Form successfully modified',
             'updatedFields' => $updatedFields
         ]);
+    }
+
+    function selectFormByRole($role)
+    {
+        switch ($role) {
+            case Role::RendezvenySzervezo:
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
+                break;
+            case Role::UniFamulus:
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')
+                    ->where('status', Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR)
+                    ->orderBy('created_at', 'desc');
+                break;
+            default:
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
+                break;
+        }
+
+        return $query;
     }
 }

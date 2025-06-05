@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Enum;
+namespace App\Enums;
 
-enum Statues: string
+enum Statuses: string
 {
     case BEERKEZETT = "Beérkezett";
     case ELUTASITVA = "Elutasítva";

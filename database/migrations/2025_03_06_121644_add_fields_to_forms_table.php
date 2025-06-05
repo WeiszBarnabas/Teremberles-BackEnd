@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enum\Statues;
+use App\Enums\Statuses;
 
 return new class extends Migration
 {
@@ -106,7 +106,7 @@ return new class extends Migration
             $table->boolean('event_regulations')->default(false);
 
             //Status
-            $table->string('status')->default(Statues::BEERKEZETT);
+            $table->string('status')->default(Statuses::BEERKEZETT);
 
             $table->text('comment')->nullable();
         });

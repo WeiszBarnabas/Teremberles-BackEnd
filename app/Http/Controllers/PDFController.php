@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
-use Illuminate\Http\Request;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class PDFController extends Controller
 {
-    public function generatePDF(Request $request)
+    public function generatePDF($id)
     {
-        $data = Form::where('id', $request->id)->first()->toArray();
-        $pdf = PDF::loadView('engedelyezo', ['form'=>$data]);
+        $data = Form::where('id', $id)->first()->toArray();
+        $pdf = Pdf::loadView('engedelyezo', ['form'=>$data]);
         return $pdf->download('document.pdf');
     }
 }

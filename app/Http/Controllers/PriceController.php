@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 
 class PriceController extends Controller
 {
-    function getPrice() {
-        $price = Price::all();
+    function getPrices() {
+        $price = Price::orderBy('id')->get();
         return response()->json(["error" => false ,"data"=>$price]);
     }
 

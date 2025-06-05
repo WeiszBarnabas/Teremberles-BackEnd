@@ -4,12 +4,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
 //   Route::get('/forms', [FormController::class, 'getAll']);
     Route::get('/forms', [FormController::class, 'getFormData']);
     Route::get('/forms/{search}', [FormController::class, 'getFormData']);
@@ -17,8 +20,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::patch('/reject-form', [FormController::class, 'rejectForm']);
     Route::patch('/accept-form', [FormController::class, 'acceptForm']);
     Route::patch('/modify-form', [FormController::class, 'modifyForm']);
-    Route::get('/generate-pdf/{id}', [PDFController::class, 'generatePDF']);
+
+    Route::get('/get-prices', [PriceController::class, 'getPrices']);
+    Route::post('/create-price', [PriceController::class, 'createPrice']);
+    Route::post('/update-price', [PriceController::class, 'updatePrice']);
+    Route::post('/alluser', [UserController::class, 'getUsers']);
+
+
 });
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/send-form', [FormController::class, 'createForm']);
@@ -35,4 +45,4 @@ Route::post('/verify-recaptcha', function (Request $request) {
     return response()->json($response->json());
 });
 
-Route::post('/create-price', [PriceController::class, 'createPrice']);
+Route::get('/generate-pdf/{id}', [PDFController::class, 'generatePDF']);
