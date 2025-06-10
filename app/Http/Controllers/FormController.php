@@ -117,6 +117,10 @@ class FormController extends Controller
             $query->where('status', '!=', Statuses::ELUTASITVA);
         }
 
+        if (Auth::user()->role == 2) {
+            $query->where('status', Statuses::UF_ARAJANLATRA_VAR);
+        }
+
         if ($search != "") {
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(event_name) LIKE ?', ['%' . strtolower($search) . '%'])
@@ -124,6 +128,7 @@ class FormController extends Controller
                     ->orWhereRaw('LOWER(status) LIKE ?', ['%' . strtolower($search) . '%']);
             });
         }
+
 
 
         $allForms = $query->get();
