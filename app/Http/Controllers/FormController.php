@@ -292,4 +292,23 @@ class FormController extends Controller
 
         return $query;
     }
+
+    public function famulus_offer(Request $request) {
+
+
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+
+        //TODO hogyan legyen megoldva az árant
+
+
+
+
+        $form->status = Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR;
+        $form->updated_at = now();
+        $form->save();
+
+        return $request->offer_data;
+    }
+
 }

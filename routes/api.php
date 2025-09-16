@@ -22,11 +22,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::patch('/reject-form', [FormController::class, 'rejectForm']);
     Route::patch('/accept-form', [FormController::class, 'acceptForm']);
     Route::patch('/modify-form', [FormController::class, 'modifyForm']);
+    Route::post('/accept-famulus-offer', [FormController::class, 'famulus_offer']);
 
     Route::get('/get-prices', [PriceController::class, 'getPrices']);
     Route::post('/create-price', [PriceController::class, 'createPrice']);
     Route::post('/update-price', [PriceController::class, 'updatePrice']);
     Route::post('/alluser', [UserController::class, 'getUsers']);
+
+
 
 
 });
