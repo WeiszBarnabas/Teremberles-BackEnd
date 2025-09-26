@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Statuses;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Form extends Model
 {
@@ -25,11 +26,21 @@ class Form extends Model
         'recording_tools', 'catering_type', 'construction_needed', 'construction_start_date',
         'construction_start_time', 'construction_end_date', 'construction_end_time',
         'mechanical_equipment', 'mechanical_other_tool', 'electrical_needed', 'power_cabinet', 'power_demand',
-        'subcontractors', 'status', 'comment'
+        'subcontractors', 'status', 'comment', 'famulus_offer',
     ];
 
     protected $casts = [
         'status' => Statuses::class,
     ];
+
+    /**
+     * Get all of the famulus_offers for the Form
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function famulus_offers(): HasMany
+    {
+        return $this->hasMany(FamulusOffers::class, 'forms_id');
+    }
 
 }

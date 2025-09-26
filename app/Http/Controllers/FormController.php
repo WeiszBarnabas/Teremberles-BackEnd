@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Enums\Statuses;
 use App\Mail\RejectEmail;
+use App\Models\FamulusOffers;
 use App\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -137,7 +138,7 @@ class FormController extends Controller
 
     public function getFormDataById(Request $request)
     {
-        $form = Form::findOrFail($request->id);
+        $form = Form::where('id', $request->id)->with('famulus_offers')->first();
         return response()->json($form);
     }
 
@@ -293,22 +294,40 @@ class FormController extends Controller
         return $query;
     }
 
-    public function famulus_offer(Request $request) {
-
-
+    public function famulus_offer(Request $request)
+    {
         $form = Form::where('id', $request->formId)->firstOrFail();
 
 
-        //TODO hogyan legyen megoldva az árant
+        $price = 0;
+        foreach ($request->offer_data as $offer) {
+            FamulusOffers::create([
+                'forms_id' => $form->id,
+                'offer_name' => $offer['category'],
+                'duration' => $offer['duration'],
+                'price_per_unit' => $offer['price_per_unit'],
+                'total_price' => $offer['total_price'],
+                'night' => $offer['unit'] == 'night' ? true : false,
+            ]);
+
+            $price += $offer['total_price'];
+        }
 
 
-
-
+        $form->famulus_offer = $price;
         $form->status = Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR;
         $form->updated_at = now();
         $form->save();
 
-        return $request->offer_data;
+        return response()->json([], 200);
     }
 
+    public function accept_famulus_by_uni(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::ARAJANLTAN_KESZITESRE_VAR;
+        $form->updated_at = now();
+        $form->save();
+    }
 }

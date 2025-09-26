@@ -8,8 +8,8 @@ enum Statuses: string
     case ELUTASITVA = "Elutasítva";
     case UF_ARAJANLATRA_VAR = "UF Árajánlatra vár";
     case UF_ARAJANLAT_ELFOGADASRA_VAR = "UF Árajánlat elfogadásra vár";
-    case ARAJANLAT_ELFOGADASRA_VAR = "Árajánlat elfogadásra vár";
     case ARAJANLTAN_KESZITESRE_VAR = "Árajánlat készítésre vár";
+    case ARAJANLAT_ELFOGADASRA_VAR = "Árajánlat elfogadásra vár";
     case LEMONDVA = "Lemondva";
     case JOVAHAGYVA = "Jóváhagyva";
     case MEGVALOSULASR_VAR = "Megvalósulásra vár";
