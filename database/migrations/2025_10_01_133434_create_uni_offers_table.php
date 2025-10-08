@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('uni_quotations', function (Blueprint $table) {
+        Schema::create('uni_offers', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('forms_id');
             $table->string('name');
             $table->integer('quantity');
             $table->integer('excluding_vat');
             $table->integer('vat');
             $table->integer('gross_amount');
+            $table->timestamps();
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('uniquotation');
+        Schema::dropIfExists('uni_offers');
     }
 };

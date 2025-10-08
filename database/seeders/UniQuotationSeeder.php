@@ -13,16 +13,16 @@ class UniQuotationSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('uniquotation')->insert([
+        DB::table('uni_quotations')->insert([
             [
-                'name' => 'Győri Városi Egywetemi Csarnok bérleti díja',
+                'name' => 'Győri Városi Egyetemi Csarnok bérleti díja',
                 'quantity' => 1,
                 'excluding_vat' => 0,
                 'vat' => 0,
                 'gross_amount' => 0
             ],
             [
-                'name' => 'Győri Városi Egywetemi Csarnok takarítás',
+                'name' => 'Győri Városi Egyetemi Csarnok takarítás',
                 'quantity' => 1,
                 'excluding_vat' => 0,
                 'vat' => 27,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Price;
+use App\Models\UniQuotation;
 use Illuminate\Http\Request;
 
 class PriceController extends Controller
@@ -11,6 +12,12 @@ class PriceController extends Controller
         $price = Price::orderBy('id')->get();
         return response()->json(["error" => false ,"data"=>$price]);
     }
+
+    function getUniPrices() {
+        $price = UniQuotation::orderBy('id')->get();
+        return response()->json(["error" => false ,"data"=>$price]);
+    }
+
 
     function createPrice(Request $request) {
 

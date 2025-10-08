@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\UniOffersController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -25,12 +26,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/accept-famulus-offer', [FormController::class, 'famulus_offer']);
     Route::post('/university-accept', [FormController::class, 'accept_famulus_by_uni']);
 
+
+
     Route::get('/get-prices', [PriceController::class, 'getPrices']);
+    Route::get('/get-uni-prices', [PriceController::class, 'getUniPrices']);
+
+
+
     Route::post('/create-price', [PriceController::class, 'createPrice']);
     Route::post('/update-price', [PriceController::class, 'updatePrice']);
     Route::post('/alluser', [UserController::class, 'getUsers']);
 
 
+    Route::post('/send-uni-prices', [UniOffersController::class, 'create']);
+    Route::post('/show-uni-offer', [UniOffersController::class, 'show_offer']);
 
 
 
