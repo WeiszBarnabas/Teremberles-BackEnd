@@ -65,11 +65,11 @@
         <tbody>
             @foreach($services as $service)
                 <tr>
-                    <td>{{ $service['name'] }}</td>
-                    <td>{{ $service['quantity'] }}</td>
-                    <td>{{ number_format($service['quantity'] * $service['excluding_vat'] , 0, ',', ' ') }} Ft</td>
-                    <td>{{ $service['vat'] }}%</td>
-                    <td>{{ number_format($service['gross'], 0, ',', ' ') }} Ft</td>
+                    <td>{{ $service['name'] ?? $service['offer_name'] }}</td>
+                    <td>{{ $service['quantity'] ?? $service['duration'] }}</td>
+                    <td>{{ $service['quantity'] ?  number_format($service['quantity'] * $service['excluding_vat'] , 0, ',', ' ') : $service['total_price'] }} Ft</td>
+                    <td>{{ $service['vat'] ?? '- ' }}%</td>
+                    <td>{{ $service['gross'] ? number_format($service['gross'], 0, ',', ' ') : number_format($service['total_price'], 0, ',', ' ') }}  Ft</td>
                 </tr>
             @endforeach
         </tbody>

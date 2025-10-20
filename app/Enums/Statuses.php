@@ -12,7 +12,7 @@ enum Statuses: string
     case ARAJANLAT_ELFOGADASRA_VAR = "Árajánlat elfogadásra vár";
     case LEMONDVA = "Lemondva";
     case JOVAHAGYVA = "Jóváhagyva";
-    case MEGVALOSULASR_VAR = "Megvalósulásra vár";
+    case MEGVALOSULASRA_VAR = "Megvalósulásra vár";
     case SZERZODESES_ADATOKRA_VAR = "Szerződéses adatokra vár";
     case SZERZODES_ATTNEZESRE_VAR = "Szerződés áttnézésre vár";
     case PARTNERI_ALAIRASRA_VAR = "Partneri aláírásra vár";

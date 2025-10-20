@@ -41,6 +41,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/send-uni-prices', [UniOffersController::class, 'create']);
     Route::post('/show-uni-offer', [UniOffersController::class, 'show_offer']);
 
+    Route::post('/accept-event', [FormController::class, 'accept_event']);
+    Route::post('/modify-request-event', [FormController::class, 'mod_req']);
 
 
 });

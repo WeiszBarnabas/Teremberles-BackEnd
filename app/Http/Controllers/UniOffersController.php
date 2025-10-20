@@ -18,13 +18,14 @@ class UniOffersController extends Controller
         $form = Form::where('id', $request->form)->first();
 
         foreach ($request->data as $value) {
+            $gross = $value['quantity'] * ($value['excluding_vat'] * (($value['vat'] + 100) / 100));
             UniOffers::create([
                 'forms_id' => $request->form,
                 'name' => $value['name'],
                 'quantity' => $value['quantity'],
                 'excluding_vat' => $value['excluding_vat'],
                 'vat' => $value['vat'],
-                'gross_amount' => $value['quantity'] ,
+                'gross_amount' => ceil($gross),
             ]);
         }
 
@@ -43,6 +44,10 @@ class UniOffersController extends Controller
         $form = Form::where('id', $request->form)->first();
 
         $services = UniOffers::where('forms_id', $form->id)->get();
+
+
+        $services = $services->concat($form->famulus_offers);
+
         $pdf = Pdf::loadView('unioffer', [
             'client_name' => 'Kovács Péter',
             'event_name' => 'Éves Konferencia',

@@ -330,4 +330,26 @@ class FormController extends Controller
         $form->updated_at = now();
         $form->save();
     }
+
+
+    public function accept_event(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::MEGVALOSULASRA_VAR;
+        $form->updated_at = now();
+        $form->save();
+    }
+
+    public function mod_req(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+
+        $form->comment = $request->reason;
+        $form->status = Statuses::UF_ARAJANLATRA_VAR;
+        $form->updated_at = now();
+
+        $form->save();
+    }
 }
