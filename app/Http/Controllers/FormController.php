@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Enums\Statuses;
 use App\Mail\RejectEmail;
+use App\Models\Document;
+use App\Models\DocumentTypes;
 use App\Models\FamulusOffers;
 use App\Models\Form;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Database\QueryException;
+use PhpOffice\PhpWord\TemplateProcessor;
+
+
+use function Pest\Laravel\json;
 
 class FormController extends Controller
 {
@@ -89,17 +95,17 @@ class FormController extends Controller
 
             return response()->json([
                 'message' => 'Form successfully created',
-                'form' => $form->id
+                'form' => $form->id,
             ], 201);
         } catch (QueryException $e) {
             return response()->json([
                 'message' => 'Database error occurred',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An unexpected error occurred',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -107,14 +113,15 @@ class FormController extends Controller
     public function getAll()
     {
         $allForms = Form::orderBy('created_at', 'desc')->get();
-        return response()->json(["data" => $allForms]);
+
+        return response()->json(['data' => $allForms]);
     }
 
-    public function getFormData($search = "")
+    public function getFormData($search = '')
     {
         $query = $this->selectFormByRole(Auth::user()->role);
 
-        if ($search == "") {
+        if ($search == '') {
             $query->where('status', '!=', Statuses::ELUTASITVA);
         }
 
@@ -122,41 +129,49 @@ class FormController extends Controller
             $query->where('status', Statuses::UF_ARAJANLATRA_VAR);
         }
 
-        if ($search != "") {
+        if (Auth::user()->role == 3) {
+            $query->where('status', Statuses::SZERZODES_ATTNEZESRE_VAR);
+        }
+
+        if (Auth::user()->role == 4) {
+            $query->where('status', Statuses::EGYETEMI_ALAIRASRA_VAR);
+        }
+
+        if ($search != '') {
             $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(event_name) LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhereRaw('LOWER(event_address) LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhereRaw('LOWER(status) LIKE ?', ['%' . strtolower($search) . '%']);
+                $q->whereRaw('LOWER(event_name) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(event_address) LIKE ?', ['%'.strtolower($search).'%'])
+                    ->orWhereRaw('LOWER(status) LIKE ?', ['%'.strtolower($search).'%']);
             });
         }
 
-
-
         $allForms = $query->get();
-        return response()->json(["data" => $allForms]);
+
+        return response()->json(['data' => $allForms]);
     }
 
     public function getFormDataById(Request $request)
     {
-        $form = Form::where('id', $request->id)->with('famulus_offers')->first();
+        $form = Form::where('id', $request->id)->with('famulus_offers', 'document')->first();
+
         return response()->json($form);
     }
 
     public function rejectForm(Request $request)
     {
-        $form = Form::where("id", $request->formId)->first();
+        $form = Form::where('id', $request->formId)->first();
 
-        if (!$form) {
+        if (! $form) {
             return response()->json(['error' => 'Form not found'], 404);
         }
 
         $form->update([
             'status' => Statuses::ELUTASITVA,
-            'comment' => $request->reason
+            'comment' => $request->reason,
         ]);
 
-        $name = "Albert Kázmér";
-        $reason = "Kevés alkohol";
+        $name = 'Albert Kázmér';
+        $reason = 'Kevés alkohol';
 
         Mail::to('albert@kazmer.com')->send(new RejectEmail($name, $reason));
 
@@ -167,14 +182,14 @@ class FormController extends Controller
 
     public function acceptForm(Request $request)
     {
-        $form = Form::where("id", $request->formId)->first();
+        $form = Form::where('id', $request->formId)->first();
 
-        if (!$form) {
+        if (! $form) {
             return response()->json(['error' => 'Form not found'], 404);
         }
 
         $form->update([
-            'status' => Statuses::UF_ARAJANLATRA_VAR
+            'status' => Statuses::UF_ARAJANLATRA_VAR,
         ]);
 
         return response()->json([
@@ -184,9 +199,9 @@ class FormController extends Controller
 
     public function modifyForm(Request $request)
     {
-        $form = Form::where("id", $request->id)->first();
+        $form = Form::where('id', $request->id)->first();
 
-        if (!$form) {
+        if (! $form) {
             return response()->json(['error' => 'Form not found'], 404);
         }
 
@@ -253,12 +268,12 @@ class FormController extends Controller
             'power_demand',
             'subcontractors',
             'event_notification_form',
-            'venue_layout'
+            'venue_layout',
         ]);
 
         $updatedFields = [];
         foreach ($formData as $key => $value) {
-            if ($form->$key !== $value) {
+            if ($value !== $form->$key) {
                 $updatedFields[$key] = $value;
             }
         }
@@ -271,23 +286,30 @@ class FormController extends Controller
 
         return response()->json([
             'message' => 'Form successfully modified',
-            'updatedFields' => $updatedFields
+            'updatedFields' => $updatedFields,
         ]);
     }
 
-    function selectFormByRole($role)
+    public function selectFormByRole($role)
     {
+
         switch ($role) {
             case Role::RendezvenySzervezo:
-                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date', 'start_time', 'end_date', 'end_time')->orderBy('start_date', 'desc');
                 break;
             case Role::UniFamulus:
-                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')
-                    ->where('status', Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR)
-                    ->orderBy('created_at', 'desc');
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date', 'start_time', 'end_date', 'end_time')
+                    ->orderBy('start_date', 'desc')
+                    ->where('status', Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR);
                 break;
+                // case Role::JogiOsztaly:
+                //     $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date', 'start_time', 'end_date', 'end_time')
+                //         ->orderBy('start_date', 'desc')
+                //         ->where('status', Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR);
+                //     break;
+
             default:
-                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date')->orderBy('created_at', 'desc');
+                $query = Form::select('id', 'event_name', 'created_at', 'status', 'event_address', 'start_date', 'start_time', 'end_date', 'end_time')->orderBy('start_date', 'desc');
                 break;
         }
 
@@ -297,7 +319,6 @@ class FormController extends Controller
     public function famulus_offer(Request $request)
     {
         $form = Form::where('id', $request->formId)->firstOrFail();
-
 
         $price = 0;
         foreach ($request->offer_data as $offer) {
@@ -312,7 +333,6 @@ class FormController extends Controller
 
             $price += $offer['total_price'];
         }
-
 
         $form->famulus_offer = $price;
         $form->status = Statuses::UF_ARAJANLAT_ELFOGADASRA_VAR;
@@ -331,12 +351,16 @@ class FormController extends Controller
         $form->save();
     }
 
-
     public function accept_event(Request $request)
     {
         $form = Form::where('id', $request->formId)->firstOrFail();
 
-        $form->status = Statuses::MEGVALOSULASRA_VAR;
+        if ($form->event_classification == 'Private') {
+            $form->status = Statuses::SZERZODESES_ADATOKRA_VAR;
+        } else {
+
+            $form->status = Statuses::MEGVALOSULASRA_VAR;
+        }
         $form->updated_at = now();
         $form->save();
     }
@@ -345,11 +369,169 @@ class FormController extends Controller
     {
         $form = Form::where('id', $request->formId)->firstOrFail();
 
-
         $form->comment = $request->reason;
         $form->status = Statuses::UF_ARAJANLATRA_VAR;
         $form->updated_at = now();
 
         $form->save();
     }
+
+    public function get_docs()
+    {
+        $docs = DocumentTypes::all();
+
+        return response()->json(['documents' => $docs]);
+    }
+
+    public function set_document(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $doc = Document::create([
+            'forms_id' => $form->id,
+            'document_types_id' => $request->docId,
+        ]);
+
+        $doc = Document::where('id', $doc->id)->with('documentType')->first();
+
+        return response()->json(['document' => $doc]);
+    }
+
+    public function generateDocx($event, $type)
+    {
+
+        $form = Form::where('id', $event)->firstOrFail();
+
+        switch ($type) {
+            case 1:
+                $templatePath = storage_path('app/public/templates/Berleti_szerzodes_sablon.docx');
+                break;
+            case 2:
+                $templatePath = storage_path('app/public/templates/Berleti_szerzodes_sablon_Csarnok.docx');
+                break;
+            case 3:
+                $templatePath = storage_path('app/public/templates/Hasznalati_szerzodes_sablon.docx');
+                break;
+            case 4:
+                $templatePath = storage_path('app/public/templates/Hasznalati_szerzodes_sablon.docx');
+                break;
+
+
+            default:
+                return response()->json([],404);
+                break;
+        }
+
+
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        $idotartam = str_replace('-', '.', $form->start_date).' '.$form->start_time.' (tól/től) - '.str_replace('-', '.', $form->end_date).' '.$form->end_time.' (ig)';
+
+
+        $templateProcessor->setValue('masreszrol', $form->client_name);
+        $templateProcessor->setValue('szekhely', $form->client_address);
+        $templateProcessor->setValue('torzskonyvi_nyil_szam', $form->torzskonyvi_nyil_szam);
+        $templateProcessor->setValue('adoszam', $form->client_tax_number);
+        $templateProcessor->setValue('kepviseli', $form->organizer_name);
+        $templateProcessor->setValue('targyegy', $form->targyegy);
+        $templateProcessor->setValue('targyketto', $form->targyketto);
+        $templateProcessor->setValue('targyharom', $form->targyharom);
+        $templateProcessor->setValue('meghatarozas', $form->meghatarozas);
+        $templateProcessor->setValue('idotartam', $idotartam);
+        $templateProcessor->setValue('hasznalatba_ado_nev', 'hozarendelt felhasznalo neve');
+        $templateProcessor->setValue('hasznalatba_ado_email', 'ugyan ez csak emaillel');
+        $templateProcessor->setValue('hasznalatba_vevo_nev', $form->organizer_name);
+        $templateProcessor->setValue('hasznalatba_vevo_email', $form->organizer_email);
+        $templateProcessor->setValue('kelt_hely', now()->format('Y-m-d'));
+        $templateProcessor->setValue('szervezo', $form->organizer_name);
+        $templateProcessor->setValue('pozicio', 'kacsakapitány');
+        $templateProcessor->setValue('intezmeny', $form->client_name);
+
+        $items = ['item_name' => 'Web Design', 'item_price' => '$500'];
+
+        // $templateProcessor->cloneRowAndSetValues('item_name', $items);
+
+        $fileName = $type .'_'.time().'.docx';
+        $tempPath = storage_path('app/public/'.$fileName);
+
+        $templateProcessor->saveAs($tempPath);
+
+        // 6. Return the file as a download and delete the temp file afterward
+        return response()->download($tempPath)->deleteFileAfterSend(true);
+    }
+
+    public function cancel_doc(Request $request)
+    {
+        $doc = Document::where('id', $request->docId)->firstOrFail();
+
+        $doc->delete();
+
+        return response()->json(['id' => $request->docId]);
+    }
+
+    public function to_law(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::SZERZODES_ATTNEZESRE_VAR;
+        $form->updated_at = now();
+
+        $form->save();
+    }
+
+    public function accept_law(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->comment = $request->reason;
+        $form->status = Statuses::PARTNERI_ALAIRASRA_VAR;
+        $form->updated_at = now();
+
+        $form->save();
+    }
+
+    public function accept_client(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::EGYETEMI_ALAIRASRA_VAR;
+        $form->updated_at = now();
+
+        $form->save();
+    }
+
+    public function accept_uni(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::SZERZODES_ALAIRVA;
+        $form->updated_at = now();
+
+        $form->save();
+    }
+
+    public function accept_evr(Request $request)
+    {
+        $form = Form::where('id', $request->formId)->firstOrFail();
+
+        $form->status = Statuses::MEGVALOSULASRA_VAR;
+        $form->updated_at = now();
+
+        $form->save();
+    }
+
+    public function update_doc(Request $request)
+    {
+        $form = Form::where('id', $request->data['id'])->firstOrFail();
+
+        $form->torzskonyvi_nyil_szam = $request->data['torzskonyvi_nyil_szam'];
+        $form->targyegy = $request->data['targyegy'];
+        $form->targyketto = $request->data['targyketto'];
+        $form->meghatarozas= $request->data['meghatarozas'];
+
+        $form->save();
+
+        return response()->json($form);
+    }
+
 }

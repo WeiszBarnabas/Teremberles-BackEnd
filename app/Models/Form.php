@@ -26,7 +26,8 @@ class Form extends Model
         'recording_tools', 'catering_type', 'construction_needed', 'construction_start_date',
         'construction_start_time', 'construction_end_date', 'construction_end_time',
         'mechanical_equipment', 'mechanical_other_tool', 'electrical_needed', 'power_cabinet', 'power_demand',
-        'subcontractors', 'status', 'comment', 'famulus_offer',
+        'subcontractors', 'status', 'comment', 'famulus_offer', 'torzskonyvi_nyil_szam', 'targyegy', 'targyketto',
+        'meghatarozas',
     ];
 
     protected $casts = [
@@ -35,12 +36,17 @@ class Form extends Model
 
     /**
      * Get all of the famulus_offers for the Form
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function famulus_offers(): HasMany
     {
         return $this->hasMany(FamulusOffers::class, 'forms_id');
     }
 
+    /**
+     * Get all of the document for the Form
+     */
+    public function document(): HasMany
+    {
+        return $this->hasMany(Document::class, 'forms_id')->with('documentType');
+    }
 }

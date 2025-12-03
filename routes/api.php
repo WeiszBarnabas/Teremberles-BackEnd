@@ -44,8 +44,23 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/accept-event', [FormController::class, 'accept_event']);
     Route::post('/modify-request-event', [FormController::class, 'mod_req']);
 
+    Route::post('/add-doc-event', [FormController::class, 'set_document']);
+    Route::post('/del-doc', [FormController::class, 'cancel_doc']);
+    Route::post('/update-docs', [FormController::class, 'update_doc']);
+
+    Route::get('/get-documents', [FormController::class, 'get_docs']);
+
+    Route::post('/send-to-law', [FormController::class, 'to_law']);
+    Route::post('/accept-by-law', [FormController::class, 'accept_law']);
+    Route::post('/accept-by-client', [FormController::class, 'accept_client']);
+    Route::post('/accept-by-univerzity', [FormController::class, 'accept_uni']);
+    Route::post('/alairvaMinden', [FormController::class, 'accept_evr']);
+
+
 
 });
+
+Route::get('/generate-docx/{event}/{type}', [FormController::class, 'generateDocx']);
 
 Route::post('/register', [AuthController::class, 'register']);
 
